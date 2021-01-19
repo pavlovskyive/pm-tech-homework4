@@ -10,9 +10,7 @@
 		7984762E25B7748B00D7501C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984762D25B7748B00D7501C /* AppDelegate.swift */; };
 		7984763025B7748B00D7501C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984762F25B7748B00D7501C /* SceneDelegate.swift */; };
 		7984763225B7748B00D7501C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984763125B7748B00D7501C /* ViewController.swift */; };
-		7984763525B7748B00D7501C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7984763325B7748B00D7501C /* Main.storyboard */; };
 		7984763725B7748F00D7501C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7984763625B7748F00D7501C /* Assets.xcassets */; };
-		7984763A25B7748F00D7501C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7984763825B7748F00D7501C /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,9 +18,7 @@
 		7984762D25B7748B00D7501C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7984762F25B7748B00D7501C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		7984763125B7748B00D7501C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		7984763425B7748B00D7501C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7984763625B7748F00D7501C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		7984763925B7748F00D7501C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7984763B25B7748F00D7501C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -56,15 +52,69 @@
 		7984762C25B7748B00D7501C /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
-				7984762D25B7748B00D7501C /* AppDelegate.swift */,
-				7984762F25B7748B00D7501C /* SceneDelegate.swift */,
-				7984763125B7748B00D7501C /* ViewController.swift */,
-				7984763325B7748B00D7501C /* Main.storyboard */,
+				7984764525B775DA00D7501C /* Application */,
+				79A1FCF625B7797F00B1AABF /* CoreData */,
+				79A1FCF925B77A9800B1AABF /* Helper */,
+				79A1FCF825B779A200B1AABF /* Services */,
+				7984764625B7760300D7501C /* Model */,
+				7984764825B7760C00D7501C /* View */,
+				7984764725B7760700D7501C /* Controller */,
 				7984763625B7748F00D7501C /* Assets.xcassets */,
-				7984763825B7748F00D7501C /* LaunchScreen.storyboard */,
-				7984763B25B7748F00D7501C /* Info.plist */,
 			);
 			path = WeatherApp;
+			sourceTree = "<group>";
+		};
+		7984764525B775DA00D7501C /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				7984762F25B7748B00D7501C /* SceneDelegate.swift */,
+				7984762D25B7748B00D7501C /* AppDelegate.swift */,
+				7984763B25B7748F00D7501C /* Info.plist */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		7984764625B7760300D7501C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		7984764725B7760700D7501C /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				7984763125B7748B00D7501C /* ViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		7984764825B7760C00D7501C /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		79A1FCF625B7797F00B1AABF /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		79A1FCF825B779A200B1AABF /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		79A1FCF925B77A9800B1AABF /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Helper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -124,9 +174,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7984763A25B7748F00D7501C /* LaunchScreen.storyboard in Resources */,
 				7984763725B7748F00D7501C /* Assets.xcassets in Resources */,
-				7984763525B7748B00D7501C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,25 +192,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		7984763325B7748B00D7501C /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7984763425B7748B00D7501C /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		7984763825B7748F00D7501C /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7984763925B7748F00D7501C /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		7984763C25B7748F00D7501C /* Debug */ = {
@@ -288,7 +317,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = G66XPV3HVM;
-				INFOPLIST_FILE = WeatherApp/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/WeatherApp/Application/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -307,7 +336,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = G66XPV3HVM;
-				INFOPLIST_FILE = WeatherApp/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/WeatherApp/Application/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
