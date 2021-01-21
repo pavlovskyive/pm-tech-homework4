@@ -7,7 +7,38 @@
 
 import UIKit
 
+var iconCorrelation: [String: String] = [
+    "01d": "sun.min",
+    "02d": "cloud.sun",
+    "03d": "cloud",
+    "04d": "smoke",
+    "09d": "cloud.rain",
+    "10d": "cloud.sun.rain",
+    "11d": "cloud.bolt",
+    "13d": "snow",
+    "50d": "cloud.fog",
+    "01n": "moon.stars",
+    "02n": "cloud.moon",
+    "03n": "cloud",
+    "04n": "smoke",
+    "09n": "cloud.rain",
+    "10n": "cloud.moon.rain",
+    "11n": "snow",
+    "50n": "cloud.fog"
+]
+
 class CurrentWeatherCell: UICollectionViewCell {
+
+    var iconName: String = "sun.min" {
+        didSet {
+            guard let systemName = iconCorrelation[iconName] else {
+                return
+            }
+
+            let image = UIImage(systemName: systemName)
+            iconImageView.image = image
+        }
+    }
 
     lazy var temperatureLabel: UILabel = {
 
@@ -15,7 +46,7 @@ class CurrentWeatherCell: UICollectionViewCell {
         label.textColor = .white
         label.font = .preferredFont(forTextStyle: .largeTitle)
         label.textAlignment = .right
-        label.adjustsFontSizeToFitWidth = false
+        label.adjustsFontSizeToFitWidth = true
 
         label.translatesAutoresizingMaskIntoConstraints = false
 
@@ -49,7 +80,6 @@ class CurrentWeatherCell: UICollectionViewCell {
 
     lazy var iconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "sun.min")
         imageView.tintColor = .white
         imageView.contentMode = .scaleAspectFit
 
@@ -80,7 +110,7 @@ class CurrentWeatherCell: UICollectionViewCell {
 
     // MARK: - Setups
 
-    func setupCell() {
+    private func setupCell() {
         translatesAutoresizingMaskIntoConstraints = false
 
         setCornerRadius()
@@ -95,7 +125,7 @@ class CurrentWeatherCell: UICollectionViewCell {
         setLayoutConstraints()
     }
 
-    func setLayoutConstraints() {
+    private func setLayoutConstraints() {
         NSLayoutConstraint.activate([
             temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
@@ -131,5 +161,23 @@ class CurrentWeatherCell: UICollectionViewCell {
         contentView.layer.masksToBounds = true
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = UIColor.clear.cgColor
+    }
+}
+
+extension CurrentWeatherCell {
+
+    // Appear with animation.
+    public func appear(order: Int) {
+        transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        alpha = 0
+
+        UIView.animate(withDuration: 0.5,
+                       delay: Double(order) * 0.05 + 0.05,
+                       usingSpringWithDamping: 0.5,
+                       initialSpringVelocity: 2,
+                       options: .curveEaseInOut) {
+            self.transform = CGAffineTransform(scaleX: 1, y: 1)
+            self.alpha = 1
+        }
     }
 }

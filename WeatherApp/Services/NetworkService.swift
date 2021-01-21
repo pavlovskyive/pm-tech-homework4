@@ -13,11 +13,19 @@ class NetworkService {
 
     private let apiKey = myOpenWeatherApiKey
     private let baseUrl = "https://api.openweathermap.org/data/2.5/weather"
-    private var session = URLSession.shared
+    private var session: URLSession = {
+
+        let config = URLSessionConfiguration.ephemeral
+        config.timeoutIntervalForRequest = 5
+        config.timeoutIntervalForResource = 5
+        config.waitsForConnectivity = true
+        config.allowsCellularAccess = true
+        return URLSession(configuration: config)
+    }()
 
     func currentWeatherURL(for city: String) -> URL? {
         URL(string: baseUrl +
-                "?q=\(city)" +
+                "?q=\(city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" +
                 "&units=metric" +
                 "&appid=\(myOpenWeatherApiKey)")
     }
@@ -53,7 +61,6 @@ extension NetworkService {
 
                 do {
                     if response.statusCode == 200 {
-                        print(String(data: data, encoding: .utf8)!)
                         let items = try JSONDecoder().decode(CurrentWeather.self, from: data)
                         completionHandler(.success(items))
                     } else {
@@ -81,36 +88,6 @@ extension NetworkService {
         }
 
         getCurrentWeather(by: url, completionHandler: completionHandler)
-    }
-
-    func getCurrentWeather(
-        for cities: [String],
-        completionHandler: @escaping (Result<[CurrentWeather], Error>) -> Void) {
-
-        var fetchedData = [CurrentWeather]()
-
-        let group = DispatchGroup()
-
-        cities.forEach { city in
-
-            group.enter()
-
-            NetworkService.shared.getCurrentWeather(for: city) { result in
-                switch result {
-                case .success(let weather):
-                    fetchedData.append(weather)
-                case .failure(let error):
-                    print(error)
-                }
-                group.leave()
-            }
-        }
-
-        group.notify(queue: .main) {
-            return completionHandler(
-                .success(fetchedData.reorder(by: cities)))
-        }
-
     }
 
     public func getCurrentWeather(

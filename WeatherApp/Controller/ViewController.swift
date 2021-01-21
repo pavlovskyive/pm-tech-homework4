@@ -14,6 +14,11 @@ class ViewController: UIViewController {
 
     var dataService = NetworkService.shared
 
+    enum Section: String, CaseIterable {
+        case location = "Weather by location"
+        case cities = "Weather in added cities"
+    }
+
     var cities = [
         "Kyiv",
         "Dnipro",
@@ -22,18 +27,26 @@ class ViewController: UIViewController {
         "Moscow",
         "Seoul",
         "Beijing",
-        "Honk Kong",
+        "Hong Kong",
         "Minsk",
         "Mykolaiv"
     ]
 
-    var data = [CurrentWeather]()
+    var weatherData = [Section: [CurrentWeather]]()
 
-    let location = CLLocation.init(latitude: 47.333119, longitude: -53.323419)
+    // Sample location data.
+    let location = CLLocation.init(latitude: 40.0384, longitude: -76.1075)
 
+    // Collection View.
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+
+        layout.sectionInset = UIEdgeInsets(
+            top: 10, left: 0, bottom: 10, right: 0)
+
         layout.itemSize = CGSize(width: view.bounds.width  - 30, height: 90)
+        layout.headerReferenceSize = CGSize(width: view.bounds.width - 30, height: 40)
+
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
 
@@ -53,40 +66,68 @@ class ViewController: UIViewController {
 
     // MARK: - Methods
 
-    @objc func getData() {
+    @objc private func getData() {
 
+        // Delete old data
+        weatherData[.location] = []
+        weatherData[.cities] = []
+
+        // Create Dispatch Group.
         let group = DispatchGroup()
 
+        // First async -- Getting weather info of current location.
         group.enter()
         dataService.getCurrentWeather(for: location) { [weak self] result in
             switch result {
             case .success(let data):
-                self?.data.insert(data, at: 0)
-            case .failure(let error):
-                print(error)
+                self?.weatherData[.location] = [data]
+            case .failure:
+                break
             }
 
+            // Decrease count.
             group.leave()
         }
 
-        group.enter()
-        dataService.getCurrentWeather(for: self.cities) { [weak self] result in
-            switch result {
-            case .success(let data):
-                self?.data = data
-            case .failure(let error):
-                print(error)
-            }
+        // It was decided to get each city weather separately.
+        //
+        // Why: If error occures, it should be handled here, not in Network Service.
+        // Because of that completion is called on error,
+        // and DispathGroup count inside Network Service not decreases.
+        //
+        // Also this approach can show weather even if not all of cities are valid,
+        // or if error occured in one of those requests.
 
-            group.leave()
+        // Getting weather info of cities.
+        cities.forEach { city in
+            group.enter()
+
+            dataService.getCurrentWeather(for: city) { [weak self] result in
+                switch result {
+                case .success(let data):
+                    // Add weather info of a city.
+                    self?.weatherData[.cities]?.append(data)
+                case .failure(let error):
+                    print(error)
+                }
+
+                group.leave()
+            }
         }
 
+        // Notify when async operations finished.
         group.notify(queue: .main) {
+
+            // Stop refresh controll spinning.
             self.refreshControl.endRefreshing()
 
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
+            // Reorder data.
+            if self.weatherData[.cities]?.count ?? 0 > 0 {
+                self.weatherData[.cities] = self.weatherData[.cities]?.reorder(by: self.cities)
             }
+
+            // Reload Collection View.
+            self.collectionView.reloadData()
         }
     }
 
@@ -104,8 +145,10 @@ class ViewController: UIViewController {
         collectionView.alwaysBounceVertical = true
         collectionView.contentInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
 
-//        collectionView.register(UINib(nibName: "CurrentWeatherCell", bundle: nil), forCellWithReuseIdentifier: "Cell")
         collectionView.register(CurrentWeatherCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.register(HeaderViewCell.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: "HeaderView")
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -120,8 +163,34 @@ class ViewController: UIViewController {
 
 extension ViewController: UICollectionViewDataSource {
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return data.count
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        weatherData.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        viewForSupplementaryElementOfKind kind: String,
+                        at indexPath: IndexPath) -> UICollectionReusableView {
+        guard let headerCell = collectionView
+                .dequeueReusableSupplementaryView(
+                    ofKind: UICollectionView.elementKindSectionHeader,
+                    withReuseIdentifier: "HeaderView", for: indexPath) as? HeaderViewCell
+        else {
+            fatalError("Could not cast cell as HeaderViewCell")
+        }
+
+        if collectionView.numberOfItems(inSection: indexPath.section) == 0 {
+            headerCell.alpha = 0
+        }
+
+        headerCell.label.text = Section.allCases[indexPath.section].rawValue
+        headerCell.appear(order: indexPath.section)
+        return headerCell
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
+
+        weatherData[Section.allCases[section]]?.count ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -139,22 +208,29 @@ extension ViewController: UICollectionViewDataSource {
 
     func setupCell(cell: CurrentWeatherCell, indexPath: IndexPath) -> CurrentWeatherCell {
 
-        cell.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-        cell.alpha = 0
+        cell.appear(order: indexPath.row)
 
-        UIView.animate(withDuration: 0.5,
-                       delay: Double(indexPath.row) * 0.05,
-                       usingSpringWithDamping: 0.5,
-                       initialSpringVelocity: 2,
-                       options: .curveEaseInOut) {
-            cell.transform = CGAffineTransform(scaleX: 1, y: 1)
-            cell.alpha = 1
+        guard let sectionWeatherData = self
+                .weatherData[Section.allCases[indexPath.section]] else {
+            return cell
         }
 
-        cell.cityLabel.text = data[indexPath.row].city
+        guard sectionWeatherData.count > indexPath.row else {
+            return cell
+        }
 
-        cell.descriptionLabel.text = data[indexPath.row].weather.first?.main
-        cell.temperatureLabel.text = "\(Int(data[indexPath.row].main.temperature))˚"
+        let weatherData = sectionWeatherData[indexPath.row]
+
+        cell.temperatureLabel.text = "\(Int(weatherData.main.temperature))˚"
+
+        cell.cityLabel.text = weatherData.city
+
+        guard let weather = weatherData.weather.first else {
+            return cell
+        }
+
+        cell.descriptionLabel.text = weather.main
+        cell.iconName = weather.icon
 
         return cell
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		793CCA3925B9B33B00BC7B4C /* HeaderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CCA3825B9B33B00BC7B4C /* HeaderViewCell.swift */; };
 		797B566925B8593500E558D5 /* Reorderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797B566825B8593500E558D5 /* Reorderable.swift */; };
 		797B566E25B883B100E558D5 /* CurrentWeatherCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797B566D25B883B100E558D5 /* CurrentWeatherCell.swift */; };
 		7984762E25B7748B00D7501C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984762D25B7748B00D7501C /* AppDelegate.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		793CCA3825B9B33B00BC7B4C /* HeaderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderViewCell.swift; sourceTree = "<group>"; };
 		797B566825B8593500E558D5 /* Reorderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reorderable.swift; sourceTree = "<group>"; };
 		797B566D25B883B100E558D5 /* CurrentWeatherCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherCell.swift; sourceTree = "<group>"; };
 		7984762A25B7748B00D7501C /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				797B566D25B883B100E558D5 /* CurrentWeatherCell.swift */,
+				793CCA3825B9B33B00BC7B4C /* HeaderViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -215,6 +218,7 @@
 			files = (
 				7991CA2C25B80296007B2D91 /* Weather.swift in Sources */,
 				79A1FD0125B7810E00B1AABF /* Constants.swift in Sources */,
+				793CCA3925B9B33B00BC7B4C /* HeaderViewCell.swift in Sources */,
 				7984763225B7748B00D7501C /* ViewController.swift in Sources */,
 				7984762E25B7748B00D7501C /* AppDelegate.swift in Sources */,
 				79A1FCFB25B77C7200B1AABF /* NetworkService.swift in Sources */,
