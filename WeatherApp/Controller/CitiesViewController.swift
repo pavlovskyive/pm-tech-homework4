@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CitiesViewController.swift
 //  WeatherApp
 //
 //  Created by Vsevolod Pavlovskyi on 19.01.2021.
@@ -8,7 +8,7 @@
 import UIKit
 import CoreLocation
 
-class ViewController: UIViewController {
+class CitiesViewController: UIViewController {
 
     // MARK: - Variables
 
@@ -134,6 +134,7 @@ class ViewController: UIViewController {
     private func setupCollectionView() {
 
         collectionView.dataSource = self
+        collectionView.delegate = self
 
         collectionView.backgroundColor = .systemBackground
 
@@ -161,7 +162,7 @@ class ViewController: UIViewController {
 
 }
 
-extension ViewController: UICollectionViewDataSource {
+extension CitiesViewController: UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         weatherData.count
@@ -221,7 +222,7 @@ extension ViewController: UICollectionViewDataSource {
 
         let weatherData = sectionWeatherData[indexPath.row]
 
-        cell.temperatureLabel.text = "\(Int(weatherData.main.temperature))˚"
+        cell.temperatureLabel.text = "\(Int(weatherData.main.temperature))°"
 
         cell.cityLabel.text = weatherData.city
 
@@ -233,5 +234,26 @@ extension ViewController: UICollectionViewDataSource {
         cell.iconName = weather.icon
 
         return cell
+    }
+}
+
+extension CitiesViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+        guard let sectionWeatherData = self
+                .weatherData[Section.allCases[indexPath.section]] else {
+            return
+        }
+
+        guard sectionWeatherData.count > indexPath.row else {
+            return
+        }
+
+        let weatherData = sectionWeatherData[indexPath.row]
+
+        let detailedViewController = DetailedViewController()
+        detailedViewController.currentWeather = weatherData
+
+        showDetailViewController(detailedViewController, sender: self)
     }
 }

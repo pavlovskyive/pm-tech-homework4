@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
 
         /// Create a view hierarchy programmatically
-        let viewController = ViewController()
+        let viewController = CitiesViewController()
         let navigation = UINavigationController(rootViewController: viewController)
 
         /// Set the root view controller of the window with your view controller

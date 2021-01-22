@@ -42,6 +42,8 @@ class HeaderViewCell: UICollectionViewCell {
 }
 
 extension HeaderViewCell {
+
+    // Appear with animation.
     func appear(order: Int) {
         alpha = 0
 

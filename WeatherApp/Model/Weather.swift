@@ -9,11 +9,13 @@ import Foundation
 
 struct CurrentWeather: Codable {
 
+    let dateTime: Int
     let weather: [Weather]
     let main: CurrentWeatherMain
     let city: String
 
     enum CodingKeys: String, CodingKey {
+        case dateTime = "dt"
         case weather
         case main
         case city = "name"
@@ -23,6 +25,41 @@ struct CurrentWeather: Codable {
 extension CurrentWeather: Reorderable {
     typealias OrderElement = String
     var orderElement: OrderElement { city }
+}
+
+struct Forecast: Codable {
+    var list: [Hourly]
+
+    func grouped() -> [Date: [Hourly]] {
+        let empty: [Date: [Hourly]] = [:]
+
+        return list.reduce(into: empty) { acc, cur in
+            let curDate = Date(timeIntervalSince1970: cur.dateTime)
+            let components = Calendar.current.dateComponents([.year, .month, .day], from: curDate)
+            let date = Calendar.current.date(from: components)!
+            let existing = acc[date] ?? []
+            acc[date] = existing + [cur]
+        }
+    }
+}
+
+struct Hourly: Codable {
+    let dateTime: Double
+    let weather: [Weather]
+    let main: CurrentWeatherMain
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        dateTime = try values.decode(Double.self, forKey: .dateTime)
+        weather = try values.decode([Weather].self, forKey: .weather)
+        main = try values.decode(CurrentWeatherMain.self, forKey: .main)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case dateTime = "dt"
+        case weather
+        case main
+    }
 }
 
 struct Weather: Codable {
@@ -45,55 +82,4 @@ struct CurrentWeatherMain: Codable {
     enum CodingKeys: String, CodingKey {
         case temperature = "temp"
     }
-}
-
-struct Daily: Codable {
-    let dataTime: Int
-    let sunrise: Int
-    let sunset: Int
-    let temp: Temperature
-    let feelsLike: FeelsLike
-    let pressure: Int
-    let humidity: Int
-    let dewPoint: Double
-    let windSpeed: Double
-    let windDegree: Int
-    let weather: [Weather]
-    let clouds: Int
-    let uvi: Double
-}
-
-extension Daily {
-
-    enum CodingKeys: String, CodingKey {
-        case dataTime = "dt"
-        case sunrise
-        case sunset
-        case temp
-        case feelsLike = "feels_like"
-        case pressure
-        case humidity
-        case dewPoint = "dew_point"
-        case windSpeed = "wind_speed"
-        case windDegree = "wind_deg"
-        case weather
-        case clouds
-        case uvi
-    }
-}
-
-struct Temperature: Codable {
-    let day: Double
-    let min: Double
-    let max: Double
-    let night: Double
-    let eve: Double
-    let morn: Double
-}
-
-struct FeelsLike: Codable {
-    let day: Double
-    let night: Double
-    let eve: Double
-    let morn: Double
 }

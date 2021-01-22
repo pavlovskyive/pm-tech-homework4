@@ -129,7 +129,7 @@ class CurrentWeatherCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
-            temperatureLabel.widthAnchor.constraint(equalToConstant: 90),
+            temperatureLabel.widthAnchor.constraint(equalToConstant: 60),
 
             iconImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
             iconImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
@@ -137,8 +137,8 @@ class CurrentWeatherCell: UICollectionViewCell {
             iconImageView.widthAnchor.constraint(equalTo: iconImageView.heightAnchor),
 
             cityLabel.bottomAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: -5),
-            cityLabel.leadingAnchor.constraint(equalTo: temperatureLabel.trailingAnchor),
-            cityLabel.trailingAnchor.constraint(equalTo: iconImageView.leadingAnchor),
+            cityLabel.leadingAnchor.constraint(equalTo: temperatureLabel.trailingAnchor, constant: 5),
+            cityLabel.trailingAnchor.constraint(equalTo: iconImageView.leadingAnchor, constant: -5),
 
             descriptionLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 0),
             descriptionLabel.centerXAnchor.constraint(equalTo: iconImageView.centerXAnchor)
