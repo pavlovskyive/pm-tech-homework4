@@ -9,6 +9,26 @@ import UIKit
 
 class DetailedMainView: UIView {
 
+    var weather: CurrentWeather? {
+        didSet {
+            guard let weather = weather else {
+                return
+            }
+
+            cityLabel.text = weather.city
+            temperatureLabel.text = "\(Int(weather.main.temperature))°"
+            desriptionLabel.text = weather.weather.first?.main
+
+            guard let icon = weather.weather.first?.icon,
+                  let systemName = iconCorrelation[icon] else {
+                return
+            }
+
+            let image = UIImage(systemName: systemName)
+            iconImageView.image = image
+        }
+    }
+
     lazy var temperatureLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -42,6 +62,16 @@ class DetailedMainView: UIView {
         return label
     }()
 
+    lazy var iconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.tintColor = .init(white: 1, alpha: 0.1)
+        imageView.contentMode = .scaleAspectFit
+
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+
+        return imageView
+    }()
+
     // MARK: - Lifecycle
 
     override init(frame: CGRect) {
@@ -55,6 +85,7 @@ class DetailedMainView: UIView {
     }
 
     private func setupView() {
+        addSubview(iconImageView)
         addSubview(temperatureLabel)
         addSubview(cityLabel)
         addSubview(desriptionLabel)
@@ -73,8 +104,14 @@ class DetailedMainView: UIView {
             desriptionLabel.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor),
 
             cityLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            cityLabel.bottomAnchor.constraint(equalTo: desriptionLabel.topAnchor, constant: -2)
+            cityLabel.bottomAnchor.constraint(equalTo: desriptionLabel.topAnchor, constant: -2),
+
+            iconImageView.widthAnchor.constraint(equalTo: widthAnchor),
+            iconImageView.heightAnchor.constraint(equalTo: iconImageView.widthAnchor),
+            iconImageView.centerXAnchor.constraint(equalTo: centerXAnchor,
+                                                   constant: CGFloat.random(in: -80...80)),
+            iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor,
+                                                   constant: CGFloat.random(in: -80...80))
         ])
     }
-
 }

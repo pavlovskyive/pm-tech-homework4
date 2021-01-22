@@ -16,6 +16,17 @@ class DetailedViewController: UIViewController {
 
     lazy var mainView = DetailedMainView()
 
+    lazy var forecastTitle: UILabel = {
+        let label = UILabel()
+        label.textColor = .init(white: 1, alpha: 0.9)
+        label.font = .preferredFont(forTextStyle: .title1)
+        label.text = "Forecast"
+
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        return label
+    }()
+
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
 
@@ -44,6 +55,7 @@ class DetailedViewController: UIViewController {
         view.backgroundColor = .systemTeal
         view.addSubview(mainView)
         view.addSubview(collectionView)
+        view.addSubview(forecastTitle)
 
         setupCollectionView()
         setLayoutConstraints()
@@ -76,10 +88,14 @@ class DetailedViewController: UIViewController {
             collectionView.widthAnchor.constraint(equalTo: view.widthAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 100),
 
+            forecastTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            forecastTitle.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40),
+            forecastTitle.bottomAnchor.constraint(equalTo: collectionView.topAnchor),
+
             mainView.topAnchor.constraint(equalTo: view.topAnchor),
             mainView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             mainView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            mainView.bottomAnchor.constraint(equalTo: collectionView.topAnchor)
+            mainView.bottomAnchor.constraint(equalTo: forecastTitle.topAnchor)
         ])
     }
 
@@ -106,9 +122,7 @@ class DetailedViewController: UIViewController {
             return
         }
 
-        mainView.cityLabel.text = currentWeather.city
-        mainView.temperatureLabel.text = "\(Int(currentWeather.main.temperature))°"
-        mainView.desriptionLabel.text = currentWeather.weather.first?.main
+        mainView.weather = currentWeather
     }
 
 }

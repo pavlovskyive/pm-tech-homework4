@@ -13,6 +13,7 @@ class CitiesViewController: UIViewController {
     // MARK: - Variables
 
     var dataService = NetworkService.shared
+    let locationManager = CLLocationManager()
 
     enum Section: String, CaseIterable {
         case location = "Weather by location"
@@ -35,7 +36,11 @@ class CitiesViewController: UIViewController {
     var weatherData = [Section: [CurrentWeather]]()
 
     // Sample location data.
-    let location = CLLocation.init(latitude: 40.0384, longitude: -76.1075)
+    var location: CLLocation? {
+        didSet {
+            getData()
+        }
+    }
 
     // Collection View.
     lazy var collectionView: UICollectionView = {
@@ -60,6 +65,7 @@ class CitiesViewController: UIViewController {
         title = "Current Weather"
         navigationController?.navigationBar.prefersLargeTitles = true
 
+        setupLocation()
         setupCollectionView()
         getData()
     }
@@ -76,17 +82,19 @@ class CitiesViewController: UIViewController {
         let group = DispatchGroup()
 
         // First async -- Getting weather info of current location.
-        group.enter()
-        dataService.getCurrentWeather(for: location) { [weak self] result in
-            switch result {
-            case .success(let data):
-                self?.weatherData[.location] = [data]
-            case .failure:
-                break
-            }
+        if let location = location {
+            group.enter()
+            dataService.getCurrentWeather(for: location) { [weak self] result in
+                switch result {
+                case .success(let data):
+                    self?.weatherData[.location] = [data]
+                case .failure:
+                    break
+                }
 
-            // Decrease count.
-            group.leave()
+                // Decrease count.
+                group.leave()
+            }
         }
 
         // It was decided to get each city weather separately.
@@ -128,6 +136,15 @@ class CitiesViewController: UIViewController {
 
             // Reload Collection View.
             self.collectionView.reloadData()
+        }
+    }
+
+    private func setupLocation() {
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            locationManager.requestWhenInUseAuthorization()
+            locationManager.requestLocation()
         }
     }
 
@@ -180,7 +197,10 @@ extension CitiesViewController: UICollectionViewDataSource {
         }
 
         if collectionView.numberOfItems(inSection: indexPath.section) == 0 {
-            headerCell.alpha = 0
+            headerCell.isHidden = true
+            headerCell.frame = .zero
+        } else {
+            headerCell.isHidden = false
         }
 
         headerCell.label.text = Section.allCases[indexPath.section].rawValue
@@ -255,5 +275,23 @@ extension CitiesViewController: UICollectionViewDelegate {
         detailedViewController.currentWeather = weatherData
 
         showDetailViewController(detailedViewController, sender: self)
+    }
+}
+
+extension CitiesViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+         print("error:: \(error.localizedDescription)")
+    }
+
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse {
+            locationManager.requestLocation()
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            self.location = location
+        }
     }
 }

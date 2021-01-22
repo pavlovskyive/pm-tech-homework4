@@ -23,7 +23,8 @@ var iconCorrelation: [String: String] = [
     "04n": "smoke",
     "09n": "cloud.rain",
     "10n": "cloud.moon.rain",
-    "11n": "snow",
+    "11n": "cloud.bolt",
+    "13n": "snow",
     "50n": "cloud.fog"
 ]
 
@@ -128,7 +129,7 @@ class CurrentWeatherCell: UICollectionViewCell {
     private func setLayoutConstraints() {
         NSLayoutConstraint.activate([
             temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
+            temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             temperatureLabel.widthAnchor.constraint(equalToConstant: 60),
 
             iconImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),

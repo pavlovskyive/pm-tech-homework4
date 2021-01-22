@@ -58,5 +58,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Weather App needs your location to give you weather data based on your location. (Don&apos;t worry, though, we won&apos;t send it to Facebook😉)</string>
 </dict>
 </plist>
