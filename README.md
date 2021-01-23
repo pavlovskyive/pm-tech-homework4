@@ -20,4 +20,4 @@
 
 Main View                  |  Detailed View
 :-------------------------:|:-------------------------------:
-![](/Screenshots/Main.png)|  ![](/Screenshots/Detailed.png)
+![](/Screenshots/Main.jpg)|  ![](/Screenshots/Detailed.jpg)
