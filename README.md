@@ -12,13 +12,12 @@
 
 - Hourly forecast orecast for 4 days.
 
-<iframe width="560" height="315"
-    src="https://youtu.be/8gB-s6OwGC0" 
-    frameborder="0" 
-    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-    allowfullscreen>
-</iframe>
+#### Video Demo:
+
+[![Video Thumbnail](http://img.youtube.com/vi/8gB-s6OwGC0/maxresdefault.jpg)](http://www.youtube.com/watch?v=8gB-s6OwGC0 "Video Demo")
+
+#### Screenshots: 
 
 Main View                  |  Detailed View
 :-------------------------:|:-------------------------------:
-![](./Screenshots/main.png)|  ![](./Screenshots/detailed.png)
+![](/Screenshots/Main.png)|  ![](/Screenshots/Detailed.png)
