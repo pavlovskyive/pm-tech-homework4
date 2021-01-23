@@ -21,6 +21,8 @@ class CitiesViewController: UIViewController {
         case cities = "Weather in added cities"
     }
 
+    var sections: [Section] = [.cities]
+
     var weatherData = [Section: [CurrentWeather]]()
 
     // Sample location data.
@@ -60,8 +62,8 @@ class CitiesViewController: UIViewController {
 
     @objc private func getData() {
 
-        // Delete old data
-        weatherData[.location] = []
+        // Delete old data.
+        weatherData[.location] = nil
         weatherData[.cities] = []
 
         // Create Dispatch Group.
@@ -93,6 +95,7 @@ class CitiesViewController: UIViewController {
         // or if error occured in one of those requests.
 
         // Getting weather info of cities.
+
         let cities = storageService.getCities()
 
         cities.forEach { city in
@@ -237,7 +240,7 @@ class CitiesViewController: UIViewController {
 extension CitiesViewController: UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        weatherData.count
+        sections.count
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -258,15 +261,15 @@ extension CitiesViewController: UICollectionViewDataSource {
             headerCell.isHidden = false
         }
 
-        headerCell.label.text = Section.allCases[indexPath.section].rawValue
-        headerCell.appear(order: indexPath.section)
+        headerCell.label.text = sections[indexPath.section].rawValue
+        headerCell.appear(delay: Double(indexPath.section) * 0.1)
         return headerCell
     }
 
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
 
-        weatherData[Section.allCases[section]]?.count ?? 0
+        weatherData[sections[section]]?.count ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -284,10 +287,10 @@ extension CitiesViewController: UICollectionViewDataSource {
 
     func setupCell(cell: CurrentWeatherCell, indexPath: IndexPath) -> CurrentWeatherCell {
 
-        cell.appear(order: indexPath.row)
+        cell.appear(delay: Double(indexPath.row) * 0.1)
 
         guard let sectionWeatherData = self
-                .weatherData[Section.allCases[indexPath.section]] else {
+                .weatherData[sections[indexPath.section]] else {
             return cell
         }
 
@@ -316,7 +319,7 @@ extension CitiesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
         guard let sectionWeatherData = self
-                .weatherData[Section.allCases[indexPath.section]] else {
+                .weatherData[sections[indexPath.section]] else {
             return
         }
 
@@ -341,12 +344,14 @@ extension CitiesViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedWhenInUse {
             locationManager.requestLocation()
+            sections.insert(.location, at: 0)
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             self.location = location
+            collectionView.reloadData()
         }
     }
 }

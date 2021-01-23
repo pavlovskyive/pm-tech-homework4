@@ -23,7 +23,7 @@ class ForecastCell: UICollectionViewCell {
 
             let iconName = forecastItem.weather.first?.icon ?? ""
 
-            guard let systemName = iconCorrelation[iconName] else {
+            guard let systemName = iconMap[iconName] else {
                 return
             }
 
@@ -114,23 +114,5 @@ class ForecastCell: UICollectionViewCell {
             temperatureLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
             temperatureLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
         ])
-    }
-}
-
-extension ForecastCell {
-
-    // Appear with animation.
-    public func appear() {
-        transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-        alpha = 0
-
-        UIView.animate(withDuration: 0.5,
-                       delay: 0.2,
-                       usingSpringWithDamping: 0.5,
-                       initialSpringVelocity: 2,
-                       options: .curveEaseInOut) {
-            self.transform = CGAffineTransform(scaleX: 1, y: 1)
-            self.alpha = 1
-        }
     }
 }

@@ -40,15 +40,3 @@ class HeaderViewCell: UICollectionViewCell {
         contentView.frame = bounds
     }
 }
-
-extension HeaderViewCell {
-
-    // Appear with animation.
-    func appear(order: Int) {
-        alpha = 0
-
-        UIView.animate(withDuration: 0.5, delay: 0.1 * Double(order)) {
-            self.alpha = 1
-        }
-    }
-}

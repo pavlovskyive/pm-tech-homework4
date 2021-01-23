@@ -7,32 +7,11 @@
 
 import UIKit
 
-var iconCorrelation: [String: String] = [
-    "01d": "sun.min",
-    "02d": "cloud.sun",
-    "03d": "cloud",
-    "04d": "smoke",
-    "09d": "cloud.rain",
-    "10d": "cloud.sun.rain",
-    "11d": "cloud.bolt",
-    "13d": "snow",
-    "50d": "cloud.fog",
-    "01n": "moon.stars",
-    "02n": "cloud.moon",
-    "03n": "cloud",
-    "04n": "smoke",
-    "09n": "cloud.rain",
-    "10n": "cloud.moon.rain",
-    "11n": "cloud.bolt",
-    "13n": "snow",
-    "50n": "cloud.fog"
-]
-
 class CurrentWeatherCell: UICollectionViewCell {
 
     var iconName: String = "sun.min" {
         didSet {
-            guard let systemName = iconCorrelation[iconName] else {
+            guard let systemName = iconMap[iconName] else {
                 return
             }
 
@@ -89,7 +68,13 @@ class CurrentWeatherCell: UICollectionViewCell {
         return imageView
     }()
 
-    private let gradientLayer = CAGradientLayer()
+    lazy private var gradientBackground: UIView = {
+        let view = GradientBackgroud()
+        view.colors = (UIColor.systemBlue, UIColor.systemTeal)
+        view.translatesAutoresizingMaskIntoConstraints = false
+
+        return view
+    }()
 
     // MARK: - Lifecycle
     override init(frame: CGRect) {
@@ -102,22 +87,14 @@ class CurrentWeatherCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        contentView.frame = bounds
-        gradientLayer.frame = bounds
-    }
-
     // MARK: - Setups
 
     private func setupCell() {
         translatesAutoresizingMaskIntoConstraints = false
 
         setCornerRadius()
-        setGradientBackgroundColor(colorOne: .systemBlue,
-                                   colorTwo: .systemTeal)
 
+        contentView.addSubview(gradientBackground)
         contentView.addSubview(iconImageView)
         contentView.addSubview(temperatureLabel)
         contentView.addSubview(cityLabel)
@@ -128,6 +105,11 @@ class CurrentWeatherCell: UICollectionViewCell {
 
     private func setLayoutConstraints() {
         NSLayoutConstraint.activate([
+            gradientBackground.widthAnchor.constraint(equalTo: contentView.widthAnchor),
+            gradientBackground.heightAnchor.constraint(equalTo: contentView.heightAnchor),
+            gradientBackground.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            gradientBackground.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+
             temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             temperatureLabel.widthAnchor.constraint(equalToConstant: 60),
@@ -146,39 +128,10 @@ class CurrentWeatherCell: UICollectionViewCell {
         ])
     }
 
-    private func setGradientBackgroundColor(colorOne: UIColor, colorTwo: UIColor) {
-        gradientLayer.frame = bounds
-        gradientLayer.colors = [colorOne.cgColor, colorTwo.cgColor]
-        gradientLayer.locations = [0.0, 1.1]
-        gradientLayer.startPoint = CGPoint(x: 0, y: 1)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0)
-        gradientLayer.cornerRadius = 3
-
-        contentView.layer.insertSublayer(gradientLayer, at: 0)
-    }
-
     private func setCornerRadius() {
         contentView.layer.cornerRadius = 12
         contentView.layer.masksToBounds = true
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = UIColor.clear.cgColor
-    }
-}
-
-extension CurrentWeatherCell {
-
-    // Appear with animation.
-    public func appear(order: Int) {
-        transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-        alpha = 0
-
-        UIView.animate(withDuration: 0.5,
-                       delay: Double(order) * 0.05 + 0.05,
-                       usingSpringWithDamping: 0.5,
-                       initialSpringVelocity: 2,
-                       options: .curveEaseInOut) {
-            self.transform = CGAffineTransform(scaleX: 1, y: 1)
-            self.alpha = 1
-        }
     }
 }

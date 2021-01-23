@@ -20,7 +20,7 @@ class DetailedMainView: UIView {
             desriptionLabel.text = weather.weather.first?.main
 
             guard let icon = weather.weather.first?.icon,
-                  let systemName = iconCorrelation[icon] else {
+                  let systemName = iconMap[icon] else {
                 return
             }
 

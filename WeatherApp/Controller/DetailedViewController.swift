@@ -41,6 +41,13 @@ class DetailedViewController: UIViewController {
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
 
+    lazy var gradientBackground: GradientBackgroud = {
+        let gradientBackground = GradientBackgroud(frame: view.bounds)
+        gradientBackground.colors = (UIColor.systemBlue, UIColor.systemTeal)
+
+        return gradientBackground
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -48,11 +55,10 @@ class DetailedViewController: UIViewController {
         updateCurrentWeatherUI()
 
         getData()
-        // Do any additional setup after loading the view.
     }
 
     func setupView() {
-        view.backgroundColor = .systemTeal
+        view.addSubview(gradientBackground)
         view.addSubview(mainView)
         view.addSubview(collectionView)
         view.addSubview(forecastTitle)
@@ -164,7 +170,7 @@ extension DetailedViewController: UICollectionViewDataSource {
 
         headerCell.date = date
 
-        headerCell.appear()
+        headerCell.appear(delay: 0.1)
         return headerCell
     }
 
@@ -188,7 +194,7 @@ extension DetailedViewController: UICollectionViewDataSource {
         }
 
         cell.forecastItem = forecastDay[indexPath.row]
-        cell.appear()
+        cell.appear(delay: 0.1)
 
         return cell
     }
