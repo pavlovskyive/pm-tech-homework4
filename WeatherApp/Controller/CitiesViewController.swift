@@ -12,26 +12,14 @@ class CitiesViewController: UIViewController {
 
     // MARK: - Variables
 
-    var dataService = NetworkService.shared
+    var networkService = NetworkService()
     let locationManager = CLLocationManager()
+    lazy var storageService: StorageService = DefaultsStorage()
 
     enum Section: String, CaseIterable {
         case location = "Weather by location"
         case cities = "Weather in added cities"
     }
-
-    var cities = [
-        "Kyiv",
-        "Dnipro",
-        "London",
-        "New York",
-        "Moscow",
-        "Seoul",
-        "Beijing",
-        "Hong Kong",
-        "Minsk",
-        "Mykolaiv"
-    ]
 
     var weatherData = [Section: [CurrentWeather]]()
 
@@ -62,9 +50,7 @@ class CitiesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Current Weather"
-        navigationController?.navigationBar.prefersLargeTitles = true
-
+        setupNavigationBar()
         setupLocation()
         setupCollectionView()
         getData()
@@ -84,7 +70,7 @@ class CitiesViewController: UIViewController {
         // First async -- Getting weather info of current location.
         if let location = location {
             group.enter()
-            dataService.getCurrentWeather(for: location) { [weak self] result in
+            networkService.getCurrentWeather(for: location) { [weak self] result in
                 switch result {
                 case .success(let data):
                     self?.weatherData[.location] = [data]
@@ -107,10 +93,12 @@ class CitiesViewController: UIViewController {
         // or if error occured in one of those requests.
 
         // Getting weather info of cities.
+        let cities = storageService.getCities()
+
         cities.forEach { city in
             group.enter()
 
-            dataService.getCurrentWeather(for: city) { [weak self] result in
+            networkService.getCurrentWeather(for: city) { [weak self] result in
                 switch result {
                 case .success(let data):
                     // Add weather info of a city.
@@ -131,12 +119,67 @@ class CitiesViewController: UIViewController {
 
             // Reorder data.
             if self.weatherData[.cities]?.count ?? 0 > 0 {
-                self.weatherData[.cities] = self.weatherData[.cities]?.reorder(by: self.cities)
+                self.weatherData[.cities] = self.weatherData[.cities]?.reorder(by: cities)
             }
 
             // Reload Collection View.
             self.collectionView.reloadData()
         }
+    }
+
+    @objc func handleAddButton() {
+        let alertController = UIAlertController(
+            title: "Add city",
+            message: "Submit a city name to see its weather on the main screen",
+            preferredStyle: .alert)
+
+        alertController.addTextField()
+
+        let submitAction = UIAlertAction(title: "Submit", style: .default) { _ in
+            let answer = alertController.textFields![0]
+
+            guard let cityName = answer.text,
+                  !cityName.isEmpty else {
+                self.handleBadCityNameInput(cityName: "")
+                return
+            }
+
+            var cities = self.storageService.getCities()
+
+            self.networkService.getCurrentWeather(for: cityName) { [weak self] result in
+                switch result {
+                case .success(let data):
+                    cities.append(cityName)
+                    self?.storageService.setCities(cities: cities)
+                    self?.weatherData[.cities]?.append(data)
+                    self?.collectionView.reloadData()
+                case .failure(let error):
+                    self?.handleBadCityNameInput(cityName: cityName)
+                    print(error)
+                    return
+                }
+            }
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+
+        alertController.addAction(submitAction)
+        alertController.addAction(cancelAction)
+
+        present(alertController, animated: true)
+    }
+
+    private func handleBadCityNameInput(cityName: String) {
+        let alertController = UIAlertController(
+            title: "Bad city name",
+            message: "System can't find city with given name \(cityName)",
+            preferredStyle: .alert)
+
+        let action = UIAlertAction(title: "OK", style: .cancel)
+
+        alertController.addAction(action)
+
+        present(alertController, animated: true)
     }
 
     private func setupLocation() {
@@ -146,6 +189,18 @@ class CitiesViewController: UIViewController {
             locationManager.requestWhenInUseAuthorization()
             locationManager.requestLocation()
         }
+    }
+
+    private func setupNavigationBar() {
+        title = "Current Weather"
+        navigationController?.navigationBar.prefersLargeTitles = true
+
+        navigationItem.setRightBarButton(
+            UIBarButtonItem(
+                barButtonSystemItem: .add,
+                target: self,
+                action: #selector(handleAddButton)),
+            animated: true)
     }
 
     private func setupCollectionView() {
@@ -280,7 +335,7 @@ extension CitiesViewController: UICollectionViewDelegate {
 
 extension CitiesViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-         print("error:: \(error.localizedDescription)")
+        print("Location Manager Error: \(error.localizedDescription)")
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

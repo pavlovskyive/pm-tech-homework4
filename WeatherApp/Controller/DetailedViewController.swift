@@ -9,7 +9,7 @@ import UIKit
 
 class DetailedViewController: UIViewController {
 
-    let dataService = NetworkService.shared
+    let networkService = NetworkService()
 
     var currentWeather: CurrentWeather?
     var forecast: Forecast?
@@ -105,7 +105,7 @@ class DetailedViewController: UIViewController {
             return
         }
 
-        dataService.getForecast(for: city) { [weak self] result in
+        networkService.getForecast(for: city) { [weak self] result in
             switch result {
             case .success(let data):
                 self?.forecast = data

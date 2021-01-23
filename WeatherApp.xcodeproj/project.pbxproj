@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		793CCA3925B9B33B00BC7B4C /* HeaderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793CCA3825B9B33B00BC7B4C /* HeaderViewCell.swift */; };
 		79544A8425BB39F700B09440 /* ForecastDateHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79544A8325BB39F700B09440 /* ForecastDateHeaderCell.swift */; };
+		79544A8B25BC0E2900B09440 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79544A8A25BC0E2900B09440 /* StorageService.swift */; };
 		79671F0725BAB7B1003AC1A6 /* DetailedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79671F0525BAB7B1003AC1A6 /* DetailedViewController.swift */; };
 		79671F0B25BAC874003AC1A6 /* DetailedMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79671F0A25BAC874003AC1A6 /* DetailedMainView.swift */; };
 		79671F0F25BAD0ED003AC1A6 /* ForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79671F0E25BAD0ED003AC1A6 /* ForecastCell.swift */; };
@@ -26,6 +27,7 @@
 /* Begin PBXFileReference section */
 		793CCA3825B9B33B00BC7B4C /* HeaderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderViewCell.swift; sourceTree = "<group>"; };
 		79544A8325BB39F700B09440 /* ForecastDateHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastDateHeaderCell.swift; sourceTree = "<group>"; };
+		79544A8A25BC0E2900B09440 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		79671F0525BAB7B1003AC1A6 /* DetailedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedViewController.swift; sourceTree = "<group>"; };
 		79671F0A25BAC874003AC1A6 /* DetailedMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedMainView.swift; sourceTree = "<group>"; };
 		79671F0E25BAD0ED003AC1A6 /* ForecastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastCell.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 			children = (
 				79A1FCFA25B77C7200B1AABF /* NetworkService.swift */,
 				79A1FD0025B7810E00B1AABF /* Constants.swift */,
+				79544A8A25BC0E2900B09440 /* StorageService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 				797B566E25B883B100E558D5 /* CurrentWeatherCell.swift in Sources */,
 				797B566925B8593500E558D5 /* Reorderable.swift in Sources */,
 				79671F0B25BAC874003AC1A6 /* DetailedMainView.swift in Sources */,
+				79544A8B25BC0E2900B09440 /* StorageService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

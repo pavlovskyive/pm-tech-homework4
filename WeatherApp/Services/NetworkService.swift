@@ -9,8 +9,6 @@ import Foundation
 import CoreLocation
 
 class NetworkService {
-    static let shared = NetworkService()
-
     private let apiKey = myOpenWeatherApiKey
     private let baseURL = "https://api.openweathermap.org/data/2.5"
     private var session: URLSession = {
@@ -24,7 +22,7 @@ class NetworkService {
         return URLSession(configuration: config)
     }()
 
-    func currentWeatherURL(for city: String) -> URL? {
+    private func currentWeatherURL(for city: String) -> URL? {
         URL(string: baseURL +
                 "/weather" +
                 "?q=\(city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" +
@@ -32,7 +30,7 @@ class NetworkService {
                 "&appid=\(myOpenWeatherApiKey)")
     }
 
-    func currentWeatherURL(for location: CLLocation) -> URL? {
+    private func currentWeatherURL(for location: CLLocation) -> URL? {
         URL(string: baseURL +
                 "/weather" +
                 "?lat=\(location.coordinate.latitude)" +
@@ -41,7 +39,7 @@ class NetworkService {
                 "&appid=\(apiKey)")
     }
 
-    func forecastURL(for city: String) -> URL? {
+    private func forecastURL(for city: String) -> URL? {
         URL(string: baseURL +
                 "/forecast" +
                 "?q=\(city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" +
@@ -51,9 +49,10 @@ class NetworkService {
 }
 
 extension NetworkService {
-    private func getCurrentWeather(
+
+    private func getData<T: Decodable>(
         by url: URL,
-        completionHandler: @escaping (Result<CurrentWeather, Error>) -> Void) {
+        completionHandler: @escaping (Result<T, Error>) -> Void) {
 
         let request = URLRequest(url: url)
 
@@ -72,7 +71,7 @@ extension NetworkService {
 
                 do {
                     if response.statusCode == 200 {
-                        let items = try JSONDecoder().decode(CurrentWeather.self, from: data)
+                        let items = try JSONDecoder().decode(T.self, from: data)
                         completionHandler(.success(items))
                     } else {
                         completionHandler(.failure(NetworkError.badStatusCode))
@@ -85,47 +84,11 @@ extension NetworkService {
         }
         task.resume()
     }
-
-    private func getForecast(
-        by url: URL,
-        completionHandler: @escaping (Result<Forecast, Error>) -> Void) {
-
-        let request = URLRequest(url: url)
-
-        let task = session.dataTask(with: request) { (data, response, error) in
-            DispatchQueue.main.async {
-                if let error = error {
-                    completionHandler(.failure(error))
-                    return
-                }
-
-                guard let data = data,
-                      let response = response as? HTTPURLResponse else {
-                    completionHandler(.failure(NetworkError.invalidDataOrResponce))
-                    return
-                }
-
-                guard response.statusCode == 200 else {
-                    completionHandler(.failure(NetworkError.badStatusCode))
-                    return
-                }
-
-                do {
-                    let result = try JSONDecoder().decode(Forecast.self, from: data)
-                    completionHandler(.success(result))
-                } catch {
-                    completionHandler(.failure(error))
-                }
-            }
-        }
-
-        task.resume()
-    }
 }
 
 extension NetworkService {
 
-    func getCurrentWeather(
+    public func getCurrentWeather(
         for city: String,
         completionHandler: @escaping (Result<CurrentWeather, Error>) -> Void) {
 
@@ -134,7 +97,7 @@ extension NetworkService {
             return
         }
 
-        getCurrentWeather(by: url, completionHandler: completionHandler)
+        getData(by: url, completionHandler: completionHandler)
     }
 
     public func getCurrentWeather(
@@ -146,7 +109,7 @@ extension NetworkService {
             return
         }
 
-        getCurrentWeather(by: url, completionHandler: completionHandler)
+        getData(by: url, completionHandler: completionHandler)
     }
 
     public func getForecast(
@@ -158,7 +121,7 @@ extension NetworkService {
             return
         }
 
-        getForecast(by: url, completionHandler: completionHandler)
+        getData(by: url, completionHandler: completionHandler)
     }
 }
 
