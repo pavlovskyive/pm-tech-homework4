@@ -51,7 +51,6 @@ class CitiesViewController: UIViewController {
         setupNavigationBar()
         setupLocation()
         setupCollectionView()
-        getData()
     }
 
     // MARK: - Methods
@@ -334,18 +333,20 @@ extension CitiesViewController: UICollectionViewDelegate {
 
 extension CitiesViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Location Manager Error: \(error.localizedDescription)")
+        // So I don't know if its ok to update data depending on can app access location or not,
+        // but here is one of the only ways it's all working correctly. 
+        getData()
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse {
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
             locationManager.requestLocation()
-            sections.insert(.location, at: 0)
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
+            sections.insert(.location, at: 0)
             self.location = location
             getData()
         }
