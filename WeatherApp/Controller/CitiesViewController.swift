@@ -13,7 +13,9 @@ class CitiesViewController: UIViewController {
     // MARK: - Variables
 
     var networkService = NetworkService()
+
     let locationManager = CLLocationManager()
+
     lazy var storageService: StorageService = DefaultsStorage()
 
     enum Section: String, CaseIterable {
@@ -26,7 +28,15 @@ class CitiesViewController: UIViewController {
     var weatherData = [Section: [CurrentWeather]]()
 
     // Sample location data.
-    var location: CLLocation?
+    var location: CLLocation? {
+        didSet {
+            if !sections.contains(.location) {
+                sections.insert(.location, at: 0)
+            }
+
+            getData()
+        }
+    }
 
     // Collection View.
     lazy var collectionView: UICollectionView = {
@@ -51,15 +61,14 @@ class CitiesViewController: UIViewController {
         setupNavigationBar()
         setupLocation()
         setupCollectionView()
+
+//        refreshControl.beginRefreshing()
+        getData()
     }
 
     // MARK: - Methods
 
     @objc private func getData() {
-
-        // Delete old data.
-        weatherData[.location] = nil
-        weatherData[.cities] = []
 
         // Create Dispatch Group.
         let group = DispatchGroup()
@@ -71,8 +80,8 @@ class CitiesViewController: UIViewController {
                 switch result {
                 case .success(let data):
                     self?.weatherData[.location] = [data]
-                case .failure:
-                    break
+                case .failure(let error):
+                    self?.displayError(error.rawValue)
                 }
 
                 // Decrease count.
@@ -92,6 +101,7 @@ class CitiesViewController: UIViewController {
         // Getting weather info of cities.
 
         let cities = storageService.getCities()
+        var citiesData = [CurrentWeather]()
 
         cities.forEach { city in
             group.enter()
@@ -100,9 +110,9 @@ class CitiesViewController: UIViewController {
                 switch result {
                 case .success(let data):
                     // Add weather info of a city.
-                    self?.weatherData[.cities]?.append(data)
+                    citiesData.append(data)
                 case .failure(let error):
-                    print(error)
+                    self?.displayError(error.rawValue)
                 }
 
                 group.leave()
@@ -116,8 +126,8 @@ class CitiesViewController: UIViewController {
             self.refreshControl.endRefreshing()
 
             // Reorder data.
-            if self.weatherData[.cities]?.count ?? 0 > 0 {
-                self.weatherData[.cities] = self.weatherData[.cities]?.reorder(by: cities)
+            if citiesData.count > 0 {
+                self.weatherData[.cities] = citiesData.reorder(by: cities)
             }
 
             // Reload Collection View.
@@ -138,7 +148,6 @@ class CitiesViewController: UIViewController {
 
             guard let cityName = answer.text,
                   !cityName.isEmpty else {
-                self.handleBadCityNameInput(cityName: "")
                 return
             }
 
@@ -151,9 +160,8 @@ class CitiesViewController: UIViewController {
                     self?.storageService.setCities(cities: cities)
                     self?.weatherData[.cities]?.append(data)
                     self?.collectionView.reloadData()
-                case .failure(let error):
-                    self?.handleBadCityNameInput(cityName: cityName)
-                    print(error)
+                case .failure:
+                    self?.displayError("City with name \(cityName) not found or server is not responding")
                     return
                 }
             }
@@ -167,23 +175,11 @@ class CitiesViewController: UIViewController {
         present(alertController, animated: true)
     }
 
-    private func handleBadCityNameInput(cityName: String) {
-        let alertController = UIAlertController(
-            title: "Bad city name",
-            message: "System can't find city with given name \(cityName)",
-            preferredStyle: .alert)
-
-        let action = UIAlertAction(title: "OK", style: .cancel)
-
-        alertController.addAction(action)
-
-        present(alertController, animated: true)
-    }
-
     private func setupLocation() {
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            locationManager.distanceFilter = 1000
             locationManager.requestWhenInUseAuthorization()
             locationManager.requestLocation()
         }
@@ -231,6 +227,8 @@ class CitiesViewController: UIViewController {
     }
 
 }
+
+// MARK: - Collection View
 
 extension CitiesViewController: UICollectionViewDataSource {
 
@@ -331,11 +329,14 @@ extension CitiesViewController: UICollectionViewDelegate {
     }
 }
 
+// MARK: - Location
+
 extension CitiesViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        // So I don't know if its ok to update data depending on can app access location or not,
-        // but here is one of the only ways it's all working correctly. 
-        getData()
+        if locationManager.authorizationStatus == .authorizedWhenInUse ||
+            locationManager.authorizationStatus == .authorizedAlways {
+            displayError("Location service is not availible")
+        }
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -346,9 +347,11 @@ extension CitiesViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            sections.insert(.location, at: 0)
             self.location = location
-            getData()
         }
     }
+}
+
+extension CitiesViewController: Alertable {
+
 }

@@ -14,8 +14,8 @@ class NetworkService {
     private var session: URLSession = {
 
         let config = URLSessionConfiguration.ephemeral
-        config.timeoutIntervalForRequest = 5
-        config.timeoutIntervalForResource = 5
+        config.timeoutIntervalForRequest = 2
+        config.timeoutIntervalForResource = 2
         config.waitsForConnectivity = true
         config.allowsCellularAccess = true
 
@@ -52,15 +52,15 @@ extension NetworkService {
 
     private func getData<T: Decodable>(
         by url: URL,
-        completionHandler: @escaping (Result<T, Error>) -> Void) {
+        completionHandler: @escaping (Result<T, NetworkError>) -> Void) {
 
         let request = URLRequest(url: url)
 
         let task = session.dataTask(with: request) { (data, response, error) in
 
             DispatchQueue.main.async {
-                if let error = error {
-                    completionHandler(.failure(error))
+                if error != nil {
+                    completionHandler(.failure(NetworkError.noConnection))
                     return
                 }
 
@@ -77,7 +77,7 @@ extension NetworkService {
                         completionHandler(.failure(NetworkError.badStatusCode))
                     }
                 } catch {
-                    completionHandler(.failure(error))
+                    completionHandler(.failure(NetworkError.decodingError))
                 }
             }
 
@@ -90,7 +90,7 @@ extension NetworkService {
 
     public func getCurrentWeather(
         for city: String,
-        completionHandler: @escaping (Result<CurrentWeather, Error>) -> Void) {
+        completionHandler: @escaping (Result<CurrentWeather, NetworkError>) -> Void) {
 
         guard let url = currentWeatherURL(for: city) else {
             completionHandler(.failure(NetworkError.badUrl))
@@ -102,7 +102,7 @@ extension NetworkService {
 
     public func getCurrentWeather(
         for location: CLLocation,
-        completionHandler: @escaping (Result<CurrentWeather, Error>) -> Void) {
+        completionHandler: @escaping (Result<CurrentWeather, NetworkError>) -> Void) {
 
         guard let url = currentWeatherURL(for: location) else {
             completionHandler(.failure(NetworkError.badUrl))
@@ -114,7 +114,7 @@ extension NetworkService {
 
     public func getForecast(
         for city: String,
-        completionHandler: @escaping (Result<Forecast, Error>) -> Void) {
+        completionHandler: @escaping (Result<Forecast, NetworkError>) -> Void) {
 
         guard let url = forecastURL(for: city) else {
             completionHandler(.failure(NetworkError.badUrl))
@@ -125,8 +125,11 @@ extension NetworkService {
     }
 }
 
-enum NetworkError: Error {
-    case badUrl
-    case invalidDataOrResponce
+enum NetworkError: String, Error {
+    case noConnection = "Your device probably is not connected to the Internet"
+    case badUrl = "Error happend while building a request to the server"
+    case invalidDataOrResponce = "Server is not responding or responds in an unpredictable way"
+    case decodingError = "Could not handle server's data correctly"
+    // Maybe implement different status codes handling later.
     case badStatusCode
 }

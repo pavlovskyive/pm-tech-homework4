@@ -25,6 +25,7 @@
 		7991CA2C25B80296007B2D91 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991CA2B25B80296007B2D91 /* Weather.swift */; };
 		79A1FCFB25B77C7200B1AABF /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A1FCFA25B77C7200B1AABF /* NetworkService.swift */; };
 		79A1FD0125B7810E00B1AABF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A1FD0025B7810E00B1AABF /* Constants.swift */; };
+		79E772EA25BE0B2900FFACF7 /* Alertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E772E925BE0B2900FFACF7 /* Alertable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 		7991CA2B25B80296007B2D91 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		79A1FCFA25B77C7200B1AABF /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		79A1FD0025B7810E00B1AABF /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		79E772E925BE0B2900FFACF7 /* Alertable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alertable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +165,7 @@
 				79544AA925BC2BC800B09440 /* Extensions */,
 				797B566825B8593500E558D5 /* Reorderable.swift */,
 				79544A9F25BC29BF00B09440 /* IconMap.swift */,
+				79E772E925BE0B2900FFACF7 /* Alertable.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 				79A1FCFB25B77C7200B1AABF /* NetworkService.swift in Sources */,
 				7984763025B7748B00D7501C /* SceneDelegate.swift in Sources */,
 				79544A9D25BC274E00B09440 /* GradientBackgroud.swift in Sources */,
+				79E772EA25BE0B2900FFACF7 /* Alertable.swift in Sources */,
 				797B566E25B883B100E558D5 /* CurrentWeatherCell.swift in Sources */,
 				797B566925B8593500E558D5 /* Reorderable.swift in Sources */,
 				79544AAB25BC2BD500B09440 /* UIView.swift in Sources */,

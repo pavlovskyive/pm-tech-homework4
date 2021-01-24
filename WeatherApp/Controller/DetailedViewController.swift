@@ -9,6 +9,8 @@ import UIKit
 
 class DetailedViewController: UIViewController {
 
+    // MARK: - Variables
+    
     let networkService = NetworkService()
 
     var currentWeather: CurrentWeather?
@@ -48,21 +50,26 @@ class DetailedViewController: UIViewController {
         return gradientBackground
     }()
 
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setupView()
-        updateCurrentWeatherUI()
 
         getData()
     }
 
+    // MARK: - Setups
+    
     func setupView() {
         view.addSubview(gradientBackground)
         view.addSubview(mainView)
         view.addSubview(collectionView)
         view.addSubview(forecastTitle)
 
+        mainView.weather = currentWeather
+        
         setupCollectionView()
         setLayoutConstraints()
     }
@@ -105,7 +112,9 @@ class DetailedViewController: UIViewController {
         ])
     }
 
-    func getData() {
+    // MARK: - Methods
+    
+    private func getData() {
 
         guard let city = currentWeather?.city else {
             return
@@ -117,21 +126,13 @@ class DetailedViewController: UIViewController {
                 self?.forecast = data
                 self?.collectionView.reloadData()
             case .failure(let error):
-                print(error)
+                self?.displayError(error.rawValue)
             }
         }
     }
-
-    func updateCurrentWeatherUI() {
-
-        guard let currentWeather = currentWeather else {
-            return
-        }
-
-        mainView.weather = currentWeather
-    }
-
 }
+
+// MARK: - Collection View
 
 extension DetailedViewController: UICollectionViewDataSource {
 
@@ -198,4 +199,8 @@ extension DetailedViewController: UICollectionViewDataSource {
 
         return cell
     }
+}
+
+extension DetailedViewController: Alertable {
+
 }
