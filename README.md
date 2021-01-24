@@ -10,7 +10,7 @@
 
 - Animated elements.
 
-- Hourly forecast orecast for 4 days.
+- Hourly forecast for 4 days.
 
 #### Video Demo:
 
