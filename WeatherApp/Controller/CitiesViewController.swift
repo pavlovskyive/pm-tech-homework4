@@ -26,11 +26,7 @@ class CitiesViewController: UIViewController {
     var weatherData = [Section: [CurrentWeather]]()
 
     // Sample location data.
-    var location: CLLocation? {
-        didSet {
-            getData()
-        }
-    }
+    var location: CLLocation?
 
     // Collection View.
     lazy var collectionView: UICollectionView = {
@@ -351,7 +347,7 @@ extension CitiesViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             self.location = location
-            collectionView.reloadData()
+            getData()
         }
     }
 }
